@@ -4,12 +4,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'Dynamidffgdsfg content? content?! Fancy...'
+    return 'Dynamic content? content?! Fancy...'
 
 
 @app.route('/data')
 def names():
-    data = {"names":["NootNoot","Heinz","Jörg"]}
+    data = {"names":["NootNoot"]}
     return jsonify(data)
 
 
