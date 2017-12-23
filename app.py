@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'idynamic content? content?! Fancy...'
+    return 'Dynamic content? content?! Fancy...'
 
 
 @app.route('/data')
