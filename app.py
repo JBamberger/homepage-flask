@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return 'Want a flask?'
@@ -13,11 +14,5 @@ def names():
     return jsonify(data)
 
 
-
 if __name__ == '__main__':
     app.run()
-
-
-
-
-# hello world
