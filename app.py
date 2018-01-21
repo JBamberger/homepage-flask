@@ -29,9 +29,8 @@ def names():
 def githup_hook():
     json = request.get_json(silent=True)
     if json is not None:
-        send_message(json, "Git update")
         print(json)
-        return ""
+        return send_message(json, "Git update")
     else:
         print("failed")
 
@@ -54,7 +53,7 @@ def register(reg_id):
 
 
 def send_message(message, title):
-    push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
+    return push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
 
 
 if __name__ == '__main__':
