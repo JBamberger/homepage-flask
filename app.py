@@ -1,6 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from pyfcm import FCMNotification
+
+
+github_secret = "***REMOVED***"
+api_key = "***REMOVED***" \
+          "***REMOVED***"
+
+ids = []
 
 app = Flask(__name__)
+push_service = FCMNotification(api_key=api_key)
 
 
 @app.route('/')
@@ -14,6 +23,38 @@ def names():
             "numbers": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
             "alphabet": [chr(x) for x in range(65, 65 + 26)]}
     return jsonify(data)
+
+
+@app.route("/v1/github/hook", methods=['POST'])
+def githup_hook():
+    json = request.get_json(silent=True)
+    if json is not None:
+        send_message(json, "Git update")
+        print(json)
+        return ""
+    else:
+        print("failed")
+
+
+@app.route('/v1/fcm/ping/all')
+@app.route('/v1/fcm/ping/device/<string:reg_id>')
+def ping_all(reg_id=None):
+    if reg_id is None:
+        send_message("Ping", "Ping")
+    else:
+        push_service.notify_single_device(reg_id, "Ping", "Ping")
+    return jsonify({"status": "success?!"})
+
+
+@app.route('/v1/fcm/register/<string:reg_id>')
+def register(reg_id):
+    ids.append(reg_id)
+    push_service.notify_single_device(reg_id, "Registered successfully.", "registration")
+    return jsonify({"status": "success?!"})
+
+
+def send_message(message, title):
+    push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
 
 
 if __name__ == '__main__':
