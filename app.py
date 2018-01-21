@@ -6,7 +6,7 @@ github_secret = "***REMOVED***"
 api_key = "***REMOVED***" \
           "***REMOVED***"
 
-ids = []
+ids = ["cA_XAmKxW0c:APA91bH9fl_N8R62iiqlu2Atn_7cd9dfffMLQfX7YljD0UIwVZoMzHjPAM0PcSVc4qBn2atWcKGrLZ9haTozi9Kx3dZVonr2YKhbvVD7qxnZrJsgIzmB3WoG2h7ENV_hwbvhSYbjx_Yn"]
 
 app = Flask(__name__)
 push_service = FCMNotification(api_key=api_key)
@@ -27,10 +27,12 @@ def names():
 
 @app.route("/v1/github/hook", methods=['POST'])
 def githup_hook():
-    json = request.get_json(silent=True)
+    json = str(request.get_json())
     if json is not None:
-        print(json)
-        return send_message(json, "Git update")
+        print((json))
+        result = send_message((json), "Git update")
+        print(result)
+        return (str(result))
     else:
         print("failed")
 
