@@ -27,10 +27,14 @@ def names():
 
 @app.route("/v1/github/hook", methods=['POST'])
 def githup_hook():
-    json = str(request.get_json())
+    json = request.get_json()
     if json is not None:
-        print((json))
-        result = send_message((json), "Git update")
+        print(json)
+        user = json["sender"]["login"]
+        repo = json["repository"]["full_name"]
+        action = json["action"]
+
+        result = send_message("{} has performed {} on repo {}".format(user, action, repo), "Git update [{}]".format(action))
         print(result)
         return (str(result))
     else:
