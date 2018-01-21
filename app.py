@@ -30,9 +30,27 @@ def githup_hook():
     json = request.get_json()
     if json is not None:
         print(json)
-        user = json["sender"]["login"]
-        repo = json["repository"]["full_name"]
-        action = json["action"]
+
+        if "sender" in json:
+            user = json["sender"]
+            if "login" in user:
+                user = user["login"]
+            else:
+                user = "unknown"
+        else:
+            user = "unknown"
+        if "repository" in json:
+            repo = json["repository"]
+            if "full_name" in repo:
+                repo = repo["full_name"]
+            else:
+                repo = "unknown"
+        else:
+            repo = "unknown"
+        if "action" in json:
+            action = json["action"]
+        else:
+            action = "unknown"
 
         result = send_message("{} has performed {} on repo {}".format(user, action, repo), "Git update [{}]".format(action))
         print(result)
