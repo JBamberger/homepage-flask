@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from pyfcm import FCMNotification
-import logging
 import db
 
 
@@ -11,9 +10,7 @@ api_key = "***REMOVED***" \
 # ids = ["cA_XAmKxW0c:APA91bH9fl_N8R62iiqlu2Atn_7cd9dfffMLQfX7YljD0UIwVZoMzHjPAM0PcSVc4qBn2atWcKGrLZ9haTozi9Kx3dZVonr2YKhbvVD7qxnZrJsgIzmB3WoG2h7ENV_hwbvhSYbjx_Yn"]
 
 app = Flask(__name__)
-handler = logging.FileHandler('/tmp/app.log')  #
-handler.setLevel(logging.ERROR)
-app.logger.addHandler(handler)
+db.open()
 push_service = FCMNotification(api_key=api_key)
 
 
@@ -107,8 +104,5 @@ def send_message(message, title):
         ids.append(x[0])
     return push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
 
-
 if __name__ == '__main__':
-    db.open()
     app.run(debug=True)
-    db.close()
