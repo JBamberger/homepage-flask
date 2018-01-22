@@ -70,6 +70,10 @@ def ping_all(reg_id=None):
     return jsonify({"status": "success"})
 
 
+@app.route('/error')
+def error():
+    raise ValueError()
+
 @app.route('/v1/fcm/register')
 def register():
     if request.args is None:
