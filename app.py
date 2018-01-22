@@ -102,5 +102,5 @@ def send_message(message, title):
 
 if __name__ == '__main__':
     db.open()
-    app.run()
+    app.run(debug=True)
     db.close()
