@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from pyfcm import FCMNotification
+import logging
 import db
 
 
@@ -10,6 +11,9 @@ api_key = "***REMOVED***" \
 # ids = ["cA_XAmKxW0c:APA91bH9fl_N8R62iiqlu2Atn_7cd9dfffMLQfX7YljD0UIwVZoMzHjPAM0PcSVc4qBn2atWcKGrLZ9haTozi9Kx3dZVonr2YKhbvVD7qxnZrJsgIzmB3WoG2h7ENV_hwbvhSYbjx_Yn"]
 
 app = Flask(__name__)
+handler = logging.FileHandler('/tmp/app.log')  #
+handler.setLevel(logging.ERROR)
+app.logger.addHandler(handler)
 push_service = FCMNotification(api_key=api_key)
 
 
