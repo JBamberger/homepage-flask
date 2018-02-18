@@ -27,6 +27,33 @@ def names():
     return jsonify(data)
 
 
+@app.route('/data/stream')
+def stream_content():
+    def item(
+            content="Hello World",
+            content_url="https://jbamberger.de/",
+            order_date=0,
+            image_url="https://jbamberger.de/static/swin.png"):
+        return {'content': content, 'contentUrl': content_url, 'orderDate': order_date, 'imageUrl': image_url}
+
+
+    data = {
+        item("Good morning"),
+        item(),
+        item(),
+        item(),
+        item(),
+        item(),
+        item(),
+        item(),
+        item()
+    }
+
+
+    return jsonify(data)
+
+
+
 @app.route("/v1/github/hook", methods=['POST'])
 def githup_hook():
     json = request.get_json()
@@ -74,6 +101,7 @@ def ping_all(reg_id=None):
 @app.route('/error')
 def error():
     raise ValueError()
+
 
 @app.route('/v1/fcm/register')
 def register():
