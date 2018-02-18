@@ -37,7 +37,7 @@ def stream_content():
         return {'content': content, 'contentUrl': content_url, 'orderDate': order_date, 'imageUrl': image_url}
 
 
-    data = {
+    data = [
         item("Good morning"),
         item(),
         item(),
@@ -47,7 +47,7 @@ def stream_content():
         item(),
         item(),
         item()
-    }
+    ]
 
 
     return jsonify(data)
