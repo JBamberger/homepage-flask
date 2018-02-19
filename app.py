@@ -32,9 +32,9 @@ def stream_content():
     def item(
             content="Hello World",
             content_url="https://jbamberger.de/",
-            order_date=0,
+            order_date=1337,
             image_url="https://jbamberger.de/static/swin.png"):
-        return {'content': content, 'contentUrl': content_url, 'orderDate': order_date, 'imageUrl': image_url}
+        return {'content': content, 'content_url': content_url, 'order_date': order_date, 'image_url': image_url}
 
 
     data = [
