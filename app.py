@@ -1,13 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from pyfcm import FCMNotification
-import db
+from pyfcm.errors import AuthenticationError, FCMServerError, InvalidDataError, InternalPackageError
 
+import db
 
 github_secret = "***REMOVED***"
 api_key = "***REMOVED***" \
           "***REMOVED***"
-
-# ids = ["cA_XAmKxW0c:APA91bH9fl_N8R62iiqlu2Atn_7cd9dfffMLQfX7YljD0UIwVZoMzHjPAM0PcSVc4qBn2atWcKGrLZ9haTozi9Kx3dZVonr2YKhbvVD7qxnZrJsgIzmB3WoG2h7ENV_hwbvhSYbjx_Yn"]
 
 app = Flask(__name__)
 db.open()
@@ -16,7 +15,7 @@ push_service = FCMNotification(api_key=api_key)
 
 @app.route('/')
 def index():
-    return 'Hello. This site has no content. Sorry.'
+    return render_template("landing_page.html")
 
 
 @app.route('/data')
@@ -33,9 +32,8 @@ def stream_content():
             content="Hello World",
             content_url="https://jbamberger.de/",
             order_date=1337,
-            image_url="https://jbamberger.de/static/swin.png"):
+            image_url="https://jbamberger.de/static/pig.jpg"):
         return {'content': content, 'content_url': content_url, 'order_date': order_date, 'image_url': image_url}
-
 
     data = [
         item("Good morning"),
@@ -49,13 +47,18 @@ def stream_content():
         item()
     ]
 
-
     return jsonify(data)
-
 
 
 @app.route("/v1/github/hook", methods=['POST'])
 def githup_hook():
+    headers = request.headers
+
+    event = "unknown"
+    if headers is not None:
+        if headers["X-GitHub-Event"] is not None:
+            event = headers["X-GitHub-Event"]
+
     json = request.get_json()
     if json is not None:
         print(json)
@@ -76,16 +79,15 @@ def githup_hook():
                 repo = "unknown"
         else:
             repo = "unknown"
-        if "action" in json:
-            action = json["action"]
-        else:
-            action = "unknown"
 
-        result = send_message("{} has performed {} on repo {}".format(user, action, repo), "Git update [{}]".format(action))
+        result = send_message("{} has performed {} on repo {}".format(user, event, repo),
+                              "Git update [{}]".format(event))
         print(result)
-        return str(result)
+        return "success"
     else:
-        print("failed")
+        print("Hook failed, headers:")
+        print(str(headers))
+        raise ValueError()
 
 
 @app.route('/v1/fcm/ping/all')
@@ -106,18 +108,32 @@ def error():
 @app.route('/v1/fcm/register')
 def register():
     if request.args is None:
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "failure", "error": "Missing arguments."})
 
     new = request.args.get("new_id", default=None)
     old = request.args.get("old_id", default=None)
     if new is None:
-        return jsonify({"status": "failure"})
+        return jsonify({"status": "failure", "error": "New id is empty."})
     if old is None:
         db.insert_fcm_id(new)
     else:
         db.update_fcm_id(old, new)
-    push_service.notify_single_device(new, "Registered successfully.", "Fcm registration")
-    return jsonify({"status": "success"})
+
+    try:
+        result = push_service.notify_single_device(new, "Registered successfully.", "Fcm registration")
+
+        if result["success"] == 1:
+            return jsonify({"status": "success"})
+        else:
+            return jsonify({"status": "failure", "error": "Error from upstream server."})
+    except AuthenticationError:
+        return jsonify({"status": "failure", "error": "AuthenticationError"})
+    except FCMServerError:
+        return jsonify({"status": "failure", "error": "FCMServerError"})
+    except InvalidDataError:
+        return jsonify({"status": "failure", "error": "InvalidDataError"})
+    except InternalPackageError:
+        return jsonify({"status": "failure", "error": "InternalPackageError"})
 
 
 @app.route("/v1/fcm/ids")
@@ -131,6 +147,7 @@ def send_message(message, title):
     for x in id_tuples:
         ids.append(x[0])
     return push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
