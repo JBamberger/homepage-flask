@@ -1,0 +1,24 @@
+body {
+    text-align: center;
+    background: #388E3C;
+    color: #ffffff;
+    font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+a, a:visited {
+    font-size: 2em;
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style-type: none;
+}
