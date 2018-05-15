@@ -4,3 +4,5 @@ Scripts
 .idea
 pip-selfcheck.json
 pyvenv.cfg
+__pycache__
+fcm.sqlite
