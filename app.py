@@ -20,6 +20,11 @@ def index():
     return render_template("landing_page.html")
 
 
+@app.route('/gdpr')
+def gdpr():
+    return render_template("privacy-policy.html", name='Jannik Bamberger', address='Gustav-Troll-Straße 35, 78315 Radolfzell', mail='mail@jbamberger.de')
+
+
 @app.route('/data')
 def names():
     return jsonify(name_data())

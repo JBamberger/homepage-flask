@@ -1,28 +1,53 @@
 body {
+    max-width: 1200px;
+    width: 100%;
     text-align: center;
     background: #388E3C;
     color: #ffffff;
     font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
-}
-
-h1 {
-    font-size: 3em;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: start;
+    margin: auto;
+    padding: 32px;
 }
 
 a, a:visited {
-    font-size: 2em;
+    color: #cccccc;
     text-decoration: none;
-    color: inherit;
 }
 
 a:hover {
     text-decoration: underline;
 }
 
-ul {
+.main-header {
+    font-size: 3em;
+}
+
+.main-list > li > a {
+    font-size: 2em;
+}
+
+.main-list {
     list-style-type: none;
 }
 
-ul > li {
+.main-list > li {
+    margin: 32px;
+}
+
+.gdpr {
+    text-align: justify;
+    word-wrap: break-word;
+    align-self: center;
+}
+
+.footer-gdpr {
+    font-size: 1em;
+    position: fixed;
+    right: 0;
+    bottom: 0;
     margin: 32px;
 }
