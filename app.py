@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, abort
 from pyfcm import FCMNotification
 from pyfcm.errors import AuthenticationError, FCMServerError, InvalidDataError, InternalPackageError
 
@@ -15,14 +15,58 @@ db.open()
 push_service = FCMNotification(api_key=api_key)
 
 
+class Page:
+    def __init__(self, slug, template, title, params):
+        self.slug = slug
+        self.template = template
+        self.title = title
+        self.params = params
+
+
+page_main = Page('main', 'landing_page.html', 'Main', {})
+# page_about = Page('about', 'about_jannik.html', 'About Jannik', {})
+page_privacyPolicy = Page('gdpr', 'privacy-policy.html', 'Privacy policy', {'address': 'Gustav-Troll-Straße 35, 78315 Radolfzell'})
+error404 = Page('error404', '404.html', 'Error 404', {})
+error500 = Page('error500', '500.html', 'Error 500', {})
+
+head_menu = [page_main,
+             # page_about,
+             page_privacyPolicy]
+foot_menu = []
+all_pages = {
+    'x': Page('x', 'layout.html', 'Hello World', {}),
+    page_main.slug: page_main,
+    # page_about.slug: page_about,
+    page_privacyPolicy.slug: page_privacyPolicy,
+    error404.slug: error404,
+    error500.slug: error500
+}
+
+common_params = {
+    'head_menu': head_menu,
+    'foot_menu': foot_menu,
+    'owner_mail': 'mail@jbamberger.de',
+    'owner_full_name': 'Jannik Bamberger',
+    'root_url': 'https://jbamberger.de'
+}
+
+
 @app.route('/')
-def index():
-    return render_template("landing_page.html")
+def show_landing_page():
+    return redirect("/page/" + page_main.slug, code=302)
 
 
-@app.route('/gdpr')
-def gdpr():
-    return render_template("privacy-policy.html", name='Jannik Bamberger', address='Gustav-Troll-Straße 35, 78315 Radolfzell', mail='mail@jbamberger.de')
+def render_page(page):
+    return render_template(page.template, current_page=page, **common_params, **page.params)
+
+
+@app.route('/page/<string:slug>')
+def show_page(slug):
+    page = all_pages.get(slug, None)
+    if page is None:
+        return abort(404)
+    else:
+        return render_page(page)
 
 
 @app.route('/data')
@@ -105,6 +149,24 @@ def send_message(message, title):
     for x in id_tuples:
         ids.append(x[0])
     return push_service.notify_multiple_devices(registration_ids=ids, message_body=message, message_title=title)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    app.logger.error('Page not found: %s', request.path)
+    return render_page(error404), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    app.logger.error('Server Error: %s', error)
+    return render_page(error500), 500
+
+
+@app.errorhandler(Exception)
+def unhandled_exception(e):
+    app.logger.error('Unhandled Exception: %s', (e))
+    return render_page(error500), 500
 
 
 if __name__ == '__main__':

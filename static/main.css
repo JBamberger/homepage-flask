@@ -1,16 +1,23 @@
 body {
-    max-width: 1200px;
-    width: 100%;
     text-align: center;
     background: #388E3C;
     color: #ffffff;
     font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-items: start;
+}
+
+main {
+    max-width: 1200px;
+    width: 100%;
     margin: auto;
-    padding: 32px;
+}
+
+.gdpr-subhead {
+}
+
+.gdpr-paragraph {
+    text-align: justify;
+    word-wrap: break-word;
+    align-self: center;
 }
 
 a, a:visited {
@@ -38,10 +45,18 @@ a:hover {
     margin: 32px;
 }
 
+.about-me-profile-img {
+    width: 128px;
+}
+
 .gdpr {
-    text-align: justify;
-    word-wrap: break-word;
-    align-self: center;
+    padding: 32px;
+}
+
+footer > ul > li {
+    padding: 8px 32px;
+    display: inline-block;
+    list-style-type: none;
 }
 
 .footer-gdpr {

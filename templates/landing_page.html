@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>JBamberger.de</title>
-    <link rel="stylesheet" type="text/css" href="../static/main.css">
-</head>
-<body>
+{% extends "layout.html" %}
+{% block main %}
 <h1 class="main-header">Welcome to jbamberger.de</h1>
 
 <ul class="main-list">
@@ -14,10 +8,4 @@
     <li><a href="https://play.google.com/store/apps/details?id=xyz.jbapps.vplan" target="_blank">FHG Application on Google Play</a></li>
     <li><a href="https://play.google.com/store/apps/details?id=kn.uni.isg.evidenceapp" target="_blank">OriginStamp Trusted Timestamping on Google Play</a></li>
 </ul>
-
-<footer class="footer-gdpr">
-    <a href="/gdpr" target="_blank">GDPR</a>
-</footer>
-
-</body>
-</html>
+{% endblock main %}

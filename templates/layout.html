@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+        <link rel="stylesheet" type="text/css" href="../static/main.css">
+        <title>{% block title %}{{ current_page.title }}{% endblock %} - JBamberger.de</title>
+    {% endblock %}
+</head>
+<body>
+<header>
+    <!--- Include header image --->
+    {% if head_menu is defined and head_menu|length > 0 %}
+        <nav>
+            {% block navigation %}
+                {% for p in head_menu %}
+                    <a href="/page/{{ p.slug }}">{{ p.title }}</a>
+                    {% if not loop.last %} | {% endif %}
+                {% endfor %}
+            {% endblock navigation %}
+        </nav>
+    {% endif %}
+</header>
+<main>
+    {% block main %}{% endblock main %}
+</main>
+<footer>
+    {% block footer %}
+        {% if foot_menu is defined and foot_menu|length > 0 %}
+            {% for p in foot_menu %}
+                <a href="/page/{{ p.slug }}">{{ p.title }}</a>
+                {% if not loop.last %} | {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% block address %}
+            <address>
+                &copy; Copyright 2018 by <a href="mailto:{{ owner_mail }}">{{ owner_full_name }}</a><br>
+            </address>
+        {% endblock address %}
+    {% endblock footer %}
+</footer>
+</body>
+</html>
