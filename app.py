@@ -79,6 +79,17 @@ def stream_content():
     return jsonify(static_stream())
 
 
+@app.route('/error')
+@app.route('/error/<error_type>')
+def error(error_type=None):
+    if error_type is None:
+        return abort(404)
+    elif error_type == 'abort':
+        return abort(500)
+    else:
+        raise ValueError()
+
+
 @app.route("/v1/github/hook", methods=['POST'])
 def github_hook():
     user, event, repo = handle_github_hook(request.headers, request.get_json())
@@ -99,11 +110,6 @@ def ping_all(reg_id=None):
     else:
         print(push_service.notify_single_device(reg_id, "Ping", "Ping to single device."))
     return jsonify({"status": "success"})
-
-
-@app.route('/error')
-def error():
-    raise ValueError()
 
 
 @app.route('/v1/fcm/register')
@@ -165,7 +171,7 @@ def internal_server_error(error):
 
 @app.errorhandler(Exception)
 def unhandled_exception(e):
-    app.logger.error('Unhandled Exception: %s', (e))
+    app.logger.error('Unhandled Exception: %s', e)
     return render_page(error500), 500
 
 
